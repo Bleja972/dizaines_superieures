@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Les Petits Défis CE1 · Calcul mental</title>
+<style>
+:root{--navy:#173a5e;--green:#2f8f57;--orange:#efae62;--cream:#fffaf0;--line:#d8e2ea;--red:#c94b4b}
+*{box-sizing:border-box} body{margin:0;font-family:"Trebuchet MS",Verdana,Arial,sans-serif;background:linear-gradient(180deg,#fff8ec,#f4e0c6);color:var(--navy)}
+.app{max-width:1050px;margin:auto;padding:18px} .shell{background:#fff;border:3px solid #e6d2b7;border-radius:22px;overflow:hidden;box-shadow:0 10px 25px rgba(0,0,0,.08)}
+header{padding:18px 20px;background:linear-gradient(135deg,#ffe1a8,#ffd39c);display:block}
+.brand{font-size:13px;font-weight:900;letter-spacing:.8px;text-transform:uppercase} h1{font-size:clamp(28px,5vw,46px);line-height:1.05;margin:4px 0} .subtitle{font-size:17px;font-weight:700;color:#5b6570}
+  
+ 
+   
+main{padding:20px} .hidden{display:none!important} .levels{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.levelCard{border:3px solid var(--line);border-radius:18px;padding:18px;text-align:left;background:#fff;cursor:pointer;min-height:180px;transition:.18s ease}
+.levelCard:hover{transform:translateY(-2px);box-shadow:0 8px 18px rgba(0,0,0,.08)} .levelCard .n{font-size:13px;font-weight:900;color:#687581;text-transform:uppercase} .levelCard h2{font-size:24px;margin:8px 0}
+.levelCard p{color:#66717c} .badge{display:inline-block;margin-top:12px;padding:7px 10px;border-radius:999px;background:#eef6ee;font-weight:800;color:#245e3d}
+.toolbar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px} button{border:0;border-radius:12px;padding:11px 15px;font:800 15px "Trebuchet MS",Verdana,Arial,sans-serif;cursor:pointer}
+.btn{background:var(--navy);color:#fff} .btn.green{background:var(--green)} .btn.orange{background:var(--orange);color:#493017}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:14px 0} .stat{background:#f7fafc;border:2px solid #dfe7ed;border-radius:13px;padding:10px;text-align:center} .stat span{display:block;font-size:13px;font-weight:800;color:#697681} .stat b{font-size:23px}
+.tip{background:#eef7ff;border:2px solid #bdd8ee;border-radius:14px;padding:12px;margin:10px 0 16px;font-weight:700}
+.problem{border:3px solid #e7d5bc;border-radius:20px;background:#fffdf8;padding:28px;text-align:center} .expression{font-size:clamp(38px,7vw,66px);font-weight:900;margin-bottom:18px}
+.answerRow{display:flex;justify-content:center;gap:10px;flex-wrap:wrap} .answerRow input{width:180px;max-width:60vw;font-size:34px;font-weight:900;text-align:center;border:3px solid #7a4fb3;border-radius:14px;padding:10px;color:#7a4fb3;background:#fff}
+.feedback{min-height:34px;font-size:20px;font-weight:900;margin-top:12px} .progressWrap{height:16px;background:#edf0f2;border-radius:999px;overflow:hidden} .progress{height:100%;width:0;background:var(--green);transition:.2s}
+.result{text-align:center;padding:20px} .scoreBig{font-size:64px;font-weight:900;color:var(--green)} .review{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-top:18px;text-align:left} .review div{border:2px solid #e0e6eb;border-radius:10px;padding:9px 12px} .ok{border-color:#8dcda4!important;background:#f0faf3} .ko{border-color:#e3a0a0!important;background:#fff3f3}
+.note{font-size:13px;color:#6a747d;margin-top:18px;text-align:center}
+@media(max-width:750px){header{grid-template-columns:1fr}.levels{grid-template-columns:1fr}.review{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="app"><div class="shell">
+<header>
+<div><div class="brand">Les Petits Défis CE1</div><h1>Calcul mental CE1</h1><div class="subtitle">Compléments · calculs avec les dizaines · additions et soustractions</div></div>
+
+</header>
+<main>
+<section id="menuView"><div class="levels" id="levels"></div><div class="note"></div></section>
+<section id="gameView" class="hidden">
+<div class="toolbar"><button class="btn" onclick="goHome()">← Niveaux</button><button class="btn orange" onclick="restartLevel()">↻ Recommencer</button></div>
+<h2 id="levelTitle"></h2><div id="levelSub" class="subtitle"></div>
+<div class="stats"><div class="stat"><span>Question</span><b id="qStat"></b></div><div class="stat"><span>Score</span><b id="scoreStat">0</b></div><div class="stat"><span>Temps</span><b id="timeStat"></b></div></div>
+<div class="progressWrap"><div id="progress" class="progress"></div></div><div id="tip" class="tip"></div>
+<div class="problem"><div id="expression" class="expression"></div><div class="answerRow"><input id="answer" inputmode="numeric" autocomplete="off"><button class="btn green" onclick="validate()">Valider</button></div><div id="feedback" class="feedback"></div></div>
+</section>
+<section id="resultView" class="hidden result"><h2 id="resultTitle"></h2><div class="scoreBig" id="scoreBig"></div><p id="resultText"></p><div id="review" class="review"></div><div class="toolbar" style="justify-content:center;margin-top:18px"><button class="btn orange" onclick="restartLevel()">↻ Rejouer</button><button class="btn" onclick="goHome()">Choisir un niveau</button></div></section>
+</main></div></div>
+<script>
+const levels=[{"id": 1, "title":"Niveau 1 · Compléments à la dizaine supérieure", "subtitle":"", "time": 180, "questions": [["9 + ? = 10", 1], ["5 + ? = 10", 5], ["13 + ? = 20", 7], ["24 + ? = 30", 6], ["36 + ? = 40", 4], ["39 + ? = 40", 1], ["48 + ? = 50", 2], ["40 + ? = 50", 10], ["51 + ? = 60", 9], ["63 + ? = 70", 7], ["69 + ? = 70", 1], ["75 + ? = 80", 5], ["84 + ? = 90", 6], ["88 + ? = 90", 2], ["93 + ? = 100", 7]], "tip": "Cherche combien il faut ajouter pour atteindre la dizaine suivante."}, {"id": 2, "title": "Niveau 2 · Ajouter ou retirer des dizaines", "subtitle":"", "time": 180, "questions": [["4 + 10", 14], ["17 + 20", 37], ["28 + 30", 58], ["39 + 60", 99], ["47 + 50", 97], ["21 - 10", 11], ["45 - 20", 25], ["56 - 30", 26], ["72 - 20", 52], ["98 - 50", 48], ["129 + 30", 159], ["124 - 20", 104], ["155 + 30", 185], ["154 - 60", 94], ["49 + 70", 119]], "tip": "Ajoute ou enlève seulement les dizaines. Les unités restent les mêmes."}, {"id": 3, "title": "Niveau 3 · Calculs avec des dizaines jusqu’à 200", "subtitle":"", "time": 360, "questions": [["21 + 50", 71], ["31 - 20", 11], ["72 + 20", 92], ["75 - 30", 45], ["52 + 40", 92], ["96 - 40", 56], ["112 + 30", 142], ["131 - 20", 111], ["125 + 10", 135], ["181 - 30", 151], ["178 + 20", 198], ["180 - 50", 130], ["103 + 60", 163], ["164 + 30", 194], ["149 - 40", 109], ["157 + 20", 177], ["154 - 30", 124], ["197 + 10", 207], ["114 - 10", 104], ["142 + 30", 172], ["130 - 20", 110], ["111 + 60", 171], ["175 - 30", 145], ["192 - 50", 142], ["156 + 50", 206], ["105 - 20", 85], ["173 + 30", 203], ["125 - 50", 75], ["141 - 60", 81], ["106 - 50", 56]], "tip": "Observe les dizaines avant de calculer. Tu peux décomposer mentalement."}];
+let currentLevel=0,qIndex=0,score=0,answers=[],timer=null,remaining=0,locked=false;
+const levelsEl=document.getElementById("levels"),menuView=document.getElementById("menuView"),gameView=document.getElementById("gameView"),resultView=document.getElementById("resultView"),answer=document.getElementById("answer");
+function buildMenu(){levelsEl.innerHTML="";levels.forEach((l,i)=>{const b=document.createElement("button");b.className="levelCard";b.innerHTML=`<div class="n">Niveau ${l.id}</div><h2>${l.title.replace(/^Niveau \d+ · /,"")}</h2>${l.subtitle?`${l.subtitle ? `<p>${l.subtitle}</p>` : ""}`:""}<span class="badge">${l.questions.length} calculs · ${Math.round(l.time/60)} min</span>`;b.onclick=()=>startLevel(i);levelsEl.appendChild(b)})}
+function startLevel(i){clearInterval(timer);currentLevel=i;qIndex=0;score=0;answers=[];locked=false;menuView.classList.add("hidden");resultView.classList.add("hidden");gameView.classList.remove("hidden");document.getElementById("levelTitle").textContent=levels[i].title;document.getElementById("levelSub").textContent=levels[i].subtitle||"";document.getElementById("tip").textContent="💡 "+levels[i].tip;remaining=levels[i].time;updateTime();timer=setInterval(()=>{remaining--;updateTime();if(remaining<=0)finishLevel(true)},1000);showQuestion()}
+function restartLevel(){startLevel(currentLevel)} function goHome(){clearInterval(timer);gameView.classList.add("hidden");resultView.classList.add("hidden");menuView.classList.remove("hidden")}
+function showQuestion(){const l=levels[currentLevel];if(qIndex>=l.questions.length){finishLevel(false);return}locked=false;document.getElementById("qStat").textContent=`${qIndex+1} / ${l.questions.length}`;document.getElementById("scoreStat").textContent=score;document.getElementById("expression").textContent=l.questions[qIndex][0];document.getElementById("feedback").textContent="";document.getElementById("progress").style.width=(qIndex/l.questions.length*100)+"%";answer.value="";answer.focus()}
+function validate(){if(locked)return;const raw=answer.value.trim();if(raw===""){document.getElementById("feedback").textContent="Écris une réponse.";return}const value=Number(raw),correct=levels[currentLevel].questions[qIndex][1],ok=value===correct;answers.push({expr:levels[currentLevel].questions[qIndex][0],given:value,correct,ok});if(ok){score++;document.getElementById("feedback").textContent="✅ Bravo !"}else{document.getElementById("feedback").textContent=`❌ Réponse : ${correct}`}locked=true;document.getElementById("scoreStat").textContent=score;setTimeout(()=>{qIndex++;showQuestion()},650)}
+answer.addEventListener("keydown",e=>{if(e.key==="Enter")validate()});
+function updateTime(){const m=Math.floor(Math.max(0,remaining)/60),s=Math.max(0,remaining)%60;document.getElementById("timeStat").textContent=`${m}:${String(s).padStart(2,"0")}`}
+function finishLevel(timeout){clearInterval(timer);if(gameView.classList.contains("hidden"))return;gameView.classList.add("hidden");resultView.classList.remove("hidden");const total=levels[currentLevel].questions.length;document.getElementById("resultTitle").textContent=timeout?"Temps écoulé !":"Niveau terminé !";document.getElementById("scoreBig").textContent=`${score} / ${total}`;document.getElementById("resultText").textContent=score===total?"Excellent !":score>=Math.ceil(total*.8)?"Très bon travail !":score>=Math.ceil(total*.6)?"Bien, continue à t’entraîner.":"Rejoue le niveau pour progresser.";const review=document.getElementById("review");review.innerHTML="";answers.forEach(a=>{const d=document.createElement("div");d.className=a.ok?"ok":"ko";const correctExpr = a.expr.includes("?") ? a.expr.replace("?", a.correct) : `${a.expr} = ${a.correct}`;
+    d.textContent = a.ok
+      ? correctExpr
+      : `${a.expr} → tu as écrit ${a.given} ; correction : ${correctExpr}`;review.appendChild(d)})}
+buildMenu();
+</script>
+</body></html>
